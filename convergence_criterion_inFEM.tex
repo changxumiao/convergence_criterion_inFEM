@@ -1,0 +1,376 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usetheme{CambridgeUS}
+\usepackage{xeCJK} 
+\usepackage{graphics}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\setCJKmainfont{SimSun}
+\begin{document}
+\author{Changxu Miao}
+\title[有限元法的误差分析和收敛分析]{有限元法的误差分析和收敛分析}
+\subtitle{}
+\institute{NWPU}
+\date{\today}
+\frame[plain]{\maketitle}
+
+\begin{frame}{Outline}
+\tableofcontents %[pausesections]
+\end{frame}
+
+%\section{Example}
+
+
+\section{误差来源}
+\subsection{固有误差}
+\begin{frame}{固有误差}
+\begin{theorem}[模型误差]
+对实际工程技术问题建立数学模型时，总是在一定条件下抓住主要因素，忽略次要因素，这样得到的数学模型是理想化的数学模型，它包含了对实际问题进行数学描述时所引起的误差。
+\end{theorem}
+\begin{example}
+弹性力学中的线性假设
+\end{example}
+\end{frame}
+
+\begin{frame}{固有误差}
+\begin{theorem}[观测误差]
+在数学模型或计算公式中包含着一些已知的数据（称为原始数据），这些数据往往是由观测实验得到的，他们和实际的数据大小之间有误差。
+\end{theorem}
+\end{frame}
+
+\subsection{计算误差}
+\begin{frame}{计算误差}
+\begin{theorem}[截断误差]
+许多数学运算理论上的精确值往往需要用无限的过程才能解出，如微分、积分、无穷级数求和等都是通过无限的极限过程来定义的。然而，实际问题的计算在计算机上只能够用有限次的算数运算和逻辑运算来完成，因此需要将问题的解决方案加工成算数运算和逻辑运算的有限序列，这种加工往往表现为无穷过程的截断，由此产生的误差称为截断误差。
+\end{theorem}
+\begin{example}
+一个函数的泰勒展式有无穷多项，但仅仅取有限项来进行近似。
+\end{example}
+\end{frame}
+
+\begin{frame}{计算误差}
+\begin{theorem}[舍入误差]
+由于计算机数系是离散的有限集，计算机在接收和运算数据时，总是将位数多的数舍入成一定位数的计算机数，这样产生的误差称为舍入误差。
+\end{theorem}
+\begin{example}
+无限循环小数、$\pi$
+\end{example}
+\end{frame}
+
+
+
+\section{里兹法误差来源}
+\subsection{等效积分形式}
+\begin{frame}{微分方程的等效积分形式}
+\begin{block}{工程问题的一般形式}
+工程问题中，通常以未知场函数满足的微分形式和边界条件的形式来提出的，可一般地表示为未知函数$\textbf{u}$应满足微分方程组
+\begin{align}
+\textbf{A}(\textbf{u})=
+\left[ \begin{matrix}
+A_1(\textbf{u})\\ 
+A_2(\textbf{u})\\ 
+\vdots
+\end{matrix}\right]
+= \textbf{0}
+\text{在$\Omega$内}
+\label{一般微分形式}
+\end{align}
+同时，未知函数$\textbf{u}$应满足边界条件
+\begin{align}
+\textbf{B}(\textbf{u})=
+\left[ \begin{matrix}
+B_1(\textbf{u})\\ 
+B_2(\textbf{u})\\ 
+\vdots
+\end{matrix}\right]
+= \textbf{0}
+\text{在$\Gamma$内}
+\label{一般边界形式}
+\end{align}
+\end{block}
+\end{frame}
+
+\begin{frame}{建立等效积分形式}
+由于微分方程组\ref{一般微分形式}在域$\Omega$域中每一个点都为零，所以对函数向量
+\begin{align}
+\textbf{v}=
+\left[ \begin{matrix}
+v_1\\ 
+v_2\\ 
+\vdots
+\end{matrix}\right]
+\end{align}
+其中元素个数与微分方程组$\textbf{A}$的个数相同。\\
+
+所以有
+\begin{align}
+\int_\Omega \textbf{v}^T\textbf{A}(\textbf{u})\mathrm{d}\Omega\equiv
+\int_\Omega (v_1 A_1(\textbf{u})+v_2 A_2(\textbf{u})+\cdots)\mathrm{d}\Omega\equiv0
+\label{微分方程积分形式}
+\end{align}
+由于$\textbf{v}$是任意的，所以可断言积分方程\ref{微分方程积分形式}与微分方程组\ref{一般微分形式}是等价的。
+\end{frame}
+
+\begin{frame}{建立等效积分形式}
+对于边界条件，同理，对任意一组函数$\overline{\textbf{v}}$有以下式子成立
+\begin{align}
+\int_\Gamma \overline{\textbf{v}}^T\textbf{B}(\textbf{u})\mathrm{d}\Gamma\equiv
+\int_\Gamma (\overline{v_1} B_1(\textbf{u})+\overline{v_2} B_2(\textbf{u})+\cdots)\mathrm{d}\Gamma\equiv0
+\label{边界条件积分形式}
+\end{align}
+因此，对于一般问题的微分方程的等效积分形式为
+\begin{align}
+\int_\Omega \textbf{v}^T\textbf{A}(\textbf{u})\mathrm{d}\Omega
++\int_\Gamma \overline{\textbf{v}}^T\textbf{B}(\textbf{u})\mathrm{d}\Gamma=0
+\label{一般积分方程}
+\end{align}
+\end{frame}
+
+\begin{frame}{建立等效积分形式}
+很多情况下可对如下式子进行分部积分
+\begin{align}
+\int_\Omega \textbf{v}^T\textbf{A}(\textbf{u})\mathrm{d}\Omega
++\int_\Gamma \overline{\textbf{v}}^T\textbf{B}(\textbf{u})\mathrm{d}\Gamma=0
+\label{一般积分方程}
+\end{align}
+从而得到另一形式
+\begin{align}
+\int_\Omega \textbf{C}^T(\textbf{v})\textbf{D}(\textbf{u})\mathrm{d}\Omega
++\int_\Gamma \textbf{E}^T(\overline{\textbf{v}})\textbf{F}(\textbf{u})\mathrm{d}\Gamma=0
+\label{弱解形式}
+\end{align}
+由分部积分特点可得，微分算子$C,D,E,F$中包含的导数阶数比$A$中的低，这样就降低了对函数$u$的连续性要求。这种方法是以提高对$v，\overline{v}$连续性要求为代价，但由于原本对$v，\overline{v}$连续性并无要求，所以这个过程并不困难，值得一提的是，从形式上看，“弱”形式对函数$u$的连续性要求降低了，但对实际的物理问题却较原始微分方程更加逼近真实解，因为原始微分方程往往对解提出了过分“平滑”的要求。
+\end{frame}
+
+\subsection{变分原理和里兹法}
+\begin{frame}{变分原理和里兹法}
+\begin{block}{加权余量法}
+对于建立的等效积分表达形式，我们可使用加权余量法对其进行求解，如配点法，子域法，最小二乘法，力矩法，伽辽金法等。
+\end{block}
+\begin{block}{线性微分算子}
+若有微分方程
+\begin{align*}
+L(u)+b=0\qquad \text{在$\Omega$域内}
+\end{align*}
+其中，微分算子L具有如下性质
+\begin{align*}
+L(\alpha u_1+\beta u_2)=\alpha L(u_1)+\beta L(u_2)
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{变分原理}
+\begin{block}{自伴随微分算子}
+定义$L(u)$与任意函数的内积为
+\begin{align*}
+\int_\Omega L(u)v\mathrm{d}\Omega
+\end{align*}
+也可写为$<L(u),u>$。对上式进行分部积分直到$u$的导数消失，结果如下
+\begin{align*}
+\int_\Omega L(u)v\mathrm{d}\Omega = \int_\Omega u L^*(v)\mathrm{d}\Omega+\mathrm{b.t.}(u,v)
+\end{align*}
+上式右端$\mathrm{b.t.}(u,v)$表示$\Omega$的边界$\Gamma$上由$u$和$v$及其导数组成的积分项。算子$L^*$称为$L$的伴随算子，若$L^*=L$，则称算子是自伴随的。
+\end{block}
+\end{frame}
+
+\begin{frame}{变分原理}
+问题的微分方程和边界条件表达式如下
+\begin{align*}
+&\textbf{A}(\textbf{u})\equiv \textbf{L}(\textbf{u})+\textbf{f}=\textbf{0}\quad in\quad\Omega\\
+&\textbf{B}(\textbf{u})=\textbf{0}\quad on\quad \Gamma
+\end{align*}
+由以上微分方程和边界条件相等效的伽辽金提法可表示为
+\begin{align*}
+\int_\Omega \delta\textbf{u}^T[\textbf{L}(\textbf{u})+\textbf{f}]\mathrm{d}\Omega
+-\int_\Gamma \delta{\textbf{u}}^T\textbf{B}(\textbf{u})\mathrm{d}\Gamma=0
+\end{align*}
+\end{frame}
+
+\begin{frame}{变分原理}
+利用算子是线性、自伴随的，可导出入下关系式
+\begin{align*}
+\int_\Omega \delta \textbf{u}^T \textbf{L}(\textbf{u}) \mathrm{d}\Omega =
+&=\int_\Omega \left[ \frac{1}{2} \delta \textbf{u}^T\textbf{L}(\textbf{u})+
+\frac{1}{2} \delta \textbf{u}^T \textbf{L}(\textbf{u}) \right] \mathrm{d}\Omega\\
+&=\int_\Omega \left[ \frac{1}{2} \delta \textbf{u}^T\textbf{L}(\textbf{u})+
+\frac{1}{2} \textbf{u}^T \textbf{L}( \delta \textbf{u}) \right] \mathrm{d}\Omega
++ \mathrm{b.t.}(\delta \textbf{u},\textbf{u})\\
+&=\int_\Omega \left[ \frac{1}{2} \delta \textbf{u}^T\textbf{L}(\textbf{u})+
+\frac{1}{2} \textbf{u}^T \delta \textbf{L}(  \textbf{u}) \right] \mathrm{d}\Omega
++ \mathrm{b.t.}(\delta \textbf{u},\textbf{u})\\
+&=\delta \int_\Omega \frac{1}{2}\textbf{u}^T\textbf{L}(\textbf{u})\mathrm{d}\Omega
++ \mathrm{b.t.}(\delta \textbf{u},\textbf{u})\\
+\end{align*}
+\end{frame}
+
+\begin{frame}{变分原理}
+代入得到原问题的变分原理
+\begin{align*}
+\delta \Pi (\textbf{u})=0
+\end{align*}
+其中
+\begin{align*}
+\Pi(\textbf{u})=\int_{\Omega}\left[ \frac{1}{2}\textbf{u}^T \textbf{L}(\textbf{u})+\textbf{u}^T\textbf{f}\right] \mathrm{d}\Omega + \mathrm{b.t.}(\textbf{u})
+\end{align*}
+上式右端$\mathrm{b.t.}(\textbf{u})$是由$\mathrm{b.t.}(\delta \textbf{u},\textbf{u})$与$\int_\Gamma \delta{\textbf{u}}^T\textbf{B}(\textbf{u})\mathrm{d}\Gamma$组成。
+\end{frame}
+
+
+\begin{frame}{变分原理}
+对于自伴随算子$L$是偶数(2m)阶的，构造函数$\tilde{u}$应事先满足含有$0\sim m-1$阶的强制边界条件，可不必事先满足$m\sim 2m-1$阶的自然边界条件。因此，可对泛函进行分部积分处理，得到弱形式
+\begin{align*}
+\Pi = \int_\Omega\left[\frac{1}{2}\textbf{C}(\textbf{u})\textbf{C}(\textbf{u})+\textbf{u} b\right] \mathrm{d}\Omega +\mathrm{b.t}
+\end{align*}
+\end{frame}
+
+\begin{frame}{里兹法}
+\begin{block}{里兹方法}
+针对线性自伴随微分方程所得到与之相对应的变分原理后，可以用于标准化过程——里兹方法来进行求解其近似解。
+\end{block}
+用一族带有待定参数的试探函数来近似表示
+\begin{align*}
+\textbf{u} \approx \tilde{\textbf{u}}= \sum\limits_{i=1}^{n}\textbf{N}_i a_i=\textbf{N}\textbf{a}
+\end{align*}
+其中$\textbf{a}$是待定参数， $\textbf{N}$是取自完备序列的已知函数，注意到此处仅截取了有限项，故存在\textcolor{red}{截断误差}。
+\end{frame}
+
+\begin{frame}{里兹方法收敛条件}
+\begin{itemize}
+\item 试探函数$N_1,N_2,\cdots,N_n$应选自完备函数列
+\item 试探函数$N_1,N_2,\cdots,N_n$应满足$C_{m-1}$连续性要求，即泛函中包含有未知函数的最高微分项阶数为$m$时，试探函数的$0\sim m-1$阶导数应该连续，以保证泛函中积分存在。
+\end{itemize}
+\begin{block}{关于$c_n$连续的解释}
+\begin{itemize}
+\item 一个函数在域内本身连续，他的一阶导数有着有限多个不连续的间断点，即在域内科技分，这样的函数称之为具有$C_0$连续性的函数。
+\item 一个函数在域内函数本身直到他的$n-1$阶导数连续，第$n$阶导数具有有限多个不连续间断点且可在域内积分，这样的函数称之为具有$C_{N-1}$连续性的函数。
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{弹性力学变分原理的弱形式}
+弱形式弱在哪？
+\begin{align*}
+\Pi_p(u_i)=\int_\Omega\frac{1}{2}D_{ijkl}\varepsilon_{ij}\varepsilon_{kl}\mathrm{d}V-\int_{\partial\Omega}\overline{T_i}u_i\mathrm{d}S-\int_\Omega\overline{f_i}u_i\mathrm{d}V
+\end{align*}
+\begin{align*}
+(\lambda+\mu)u_{k.ki}+\mu u_{i,jj}+F_i = 0
+\end{align*}
+积分形式中仅包含位移一阶导数应变，后者包含了应变的导数，故后者对函数的连续性要求更高。
+\end{frame}
+
+
+%\section{Lower Limit Properties of Displacement Element Solution}
+\section{有限元解的性质和收敛准则}
+\begin{frame}{有限元解的性质和收敛准则}
+下面以一个含有待求的标量场函数为例，微分方程是
+\begin{align*}
+A(\phi)=L(\phi)+b=0
+\end{align*}
+相应的泛函是
+\begin{align*}
+\Pi = \int_\Omega\left[\frac{1}{2}\textbf{C}(\phi)\textbf{C}(\phi)+\phi b\right] \mathrm{d}\Omega +\mathrm{b.t}
+\end{align*}
+\end{frame}
+
+\begin{frame}
+假定泛函$\Pi$中包含和它的直至$m$阶的各阶导数，若$m$阶导数是非零的，则近似函数$\phi$至少必须是$m$次多项式。若取$p$次完全多项式为试探函数，则必须满足$p\ge m$。
+\begin{align*}
+\phi=\beta_{0}+\beta_{1}x+\beta_{2}x^{2}+\beta_{3}x^{3}+\beta_{4}x^{4}+\beta_{p}x^{p}\\
+\dfrac{d\phi}{dx}=\beta_{1}+2\beta_{2}x+3\beta_{4}x^{2}+...+p\beta_{p}x^{p-1}\\
+\dfrac{d^{2}\phi}{dx^{2}}=2\beta_{2}+6\beta_{3}x+...+p(p-1)\beta_{p}x^{p-2}\\
+\dfrac{d^{m}\phi}{dx^{m}}=m!\beta_{m}+(m+1)!\beta_{m-1}x+...+\dfrac{p!}{(p-m)!}\beta_{p}x^{p-m}
+\end{align*}
+\end{frame}
+
+\begin{frame}{收敛准则}
+\begin{block}{准则1-完备性}
+如果出现在泛函中场函数的最高阶导数是$m$阶，则有限元解收敛的条件之一是单元内场函数的试探函数至少是$m$次完全多项式。
+\end{block}
+\begin{block}{物理意义}
+反映单元的刚体位移和常应变位移模式
+\end{block}
+\end{frame}
+
+\begin{frame}{收敛准则}
+\begin{block}{准则1-连续性}
+当试探函数为多项式的情况下，单元内部函数的连续性显然是满足的，如果试探函数是$m$次多项式，则单元内部满足$C_{m-1}$连续性。
+\end{block}
+\begin{block}{物理意义}
+单元内部连续协调。
+\end{block}
+\end{frame}
+
+\begin{frame}{收敛准则}
+从严格意义上来讲，有限元解收敛于精确解实际上是指有限元解的离散误差趋近于零。所谓的离散误差是指一个连续的求解域被划分为有限个子域时，由单元的试函数近似整体的场函数时所引起的误差。
+\begin{block}{准则2-协调性}
+如果泛函中出现的最高阶导数是$m$阶的，则试探函数在单元交界面上必须具有$C_{m-1}$连续性，即在相邻单元交界面上，函数应当有直到$m-1$阶的连续导数。
+\end{block}
+
+\end{frame}
+
+%\section{Selection of Items of Polynomial}
+%\subsection{Lagrange Unit Family}
+%\subsection{Hermit Unit Family}
+%\subsection{Serendipity Unit Family}
+%\section{Introduction of Isogeometric analysis}
+\end{document}
+
+
+%
+%\begin{frame}{里兹法}
+%将近似函数代入泛函$\Pi$中可得到用试函数和待定系数表示的的泛函表达式，此时，泛函的极值问题为零转换为泛函对所包含的待定参数求取全微分，并令所得方程为等于零，即
+%\begin{align*}
+%\delta\Pi = \frac{\partial \Pi}{\partial {a}_1}\delta {a}_1
+%+\frac{\partial \Pi}{\partial {a}_2}\delta {a}_2
+%+\cdots
+%+\frac{\partial \Pi}{\partial {a}_n}\delta {a}_n
+%=0
+%\end{align*}
+%由于$\delta {a}_1,\delta {a}_2,\cdots$是任意的，所以有
+%\begin{align*}
+%\frac{\partial \Pi}{\partial {a}} =
+%\left[ \begin{matrix}
+%\frac{\partial \Pi}{\partial {a}_1}\\ 
+%\frac{\partial \Pi}{\partial {a}_2}\\ 
+%\vdots\\
+%\frac{\partial \Pi}{\partial {a}_n}
+%\end{matrix}\right]
+%=\textbf{0}
+%\end{align*}
+%\end{frame}
+%
+%\begin{frame}{里兹法}
+%将近似函数代入泛函$\Pi$中可得到用试函数和待定系数表示的的泛函表达式，此时，泛函的极值问题为零转换为泛函对所包含的待定参数求取全微分，并令所得方程为等于零，即
+%\begin{align*}
+%\delta\Pi = \frac{\partial \Pi}{\partial {a}_1}\delta {a}_1
+%+\frac{\partial \Pi}{\partial {a}_2}\delta {a}_2
+%+\cdots
+%+\frac{\partial \Pi}{\partial {a}_n}\delta {a}_n
+%=0
+%\end{align*}
+%由于$\delta {a}_1,\delta {a}_2,\cdots$是任意的，所以有
+%\begin{align*}
+%\frac{\partial \Pi}{\partial {a}} =
+%\left[ \begin{matrix}
+%\frac{\partial \Pi}{\partial {a}_1}\\ 
+%\frac{\partial \Pi}{\partial {a}_2}\\ 
+%\vdots\\
+%\frac{\partial \Pi}{\partial {a}_n}
+%\end{matrix}\right]
+%=\textbf{0}
+%\end{align*}
+%\end{frame}
+%\begin{frame}{里兹法应用}
+%对于薄膜压力问题有
+%\begin{align*}
+%&-\Delta u = f(x,y)\quad \text{($\Omega$是有界区域，$\partial \Omega$ 是分段光滑曲线)}\\
+%&u|_{\partial \Omega}=0
+%\end{align*}
+%定义
+%\begin{align*}
+%&-\Delta u = f(x,y)\quad \text{($\Omega$是有界区域，$\partial \Omega$ 是分段光滑曲线)}\\
+%&u|_{\partial \Omega}=0
+%\end{align*}
+%\end{frame}
